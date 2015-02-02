@@ -1,0 +1,241 @@
+<!doctype html>
+<html>
+<head>
+
+<script type="text/javascript">
+hmi = {};
+
+/* 
+
+   Configure me here!
+   List the output name, and the corresponding pin, for each output.
+   
+ */
+hmi.pins = {"mouth":12,"head":16,"breathing":18,"tail":22};
+hmi.patternLength = 60;
+
+
+/* Auto generate an index */
+for(var p in hmi.pins){
+	if(hmi.pins.hasOwnProperty(p)){
+		if(hmi.outputs == undefined){
+			hmi.outputs = [p];
+		}else{
+			hmi.outputs.push(p);
+		}
+	}
+}
+
+</script>
+
+<script type="text/javascript" src="magic.js"></script>
+
+<script type="text/javascript" src="jquery-1.11.2.js"></script>
+<script type="text/javascript" src="jquery.mobile-1.4.5.js"></script>
+<link rel="stylesheet" type="text/css" href="jquery.mobile-1.4.5.css"></script>
+
+<style type="text/css">
+	table .label {
+		width: 3em;
+		border-right: 1px solid #999999;
+	}
+
+	table .clickable {
+		border-left: 1px solid #cccccc;
+	}
+
+	table .clickableTen {
+		border-left: 1px solid #aaaaaa;
+	}
+
+	table .even {
+		background: #eeeeee;
+	}
+
+	#timeline td {
+		padding: 4px;
+	}
+
+	#timeline .on {
+		background: red;
+	}
+
+	#timeline .row0 .on {
+		background: #AA3939;
+	}
+
+	#timeline .row1 .on {
+		background: #AA8B39;
+	}
+
+	#timeline .row2 .on {
+		background: #323875;
+	}
+
+	#timeline .row3 .on {
+		background: #2D882D;
+	}
+
+</style>
+
+<script type="text/javascript">
+	hmi.mode = "pencil";
+	hmi.state = {};
+
+	hmi.addTimelineRow = function (pin, label, oddeven, idx) {
+		var tlr = $("<tr></tr>").addClass("timelinerow");
+
+		tlr.addClass("row" + idx);
+
+		tlr.on("mousedown", function() {
+			hmi.state.clickedRow = this;
+		});
+
+		if (!oddeven) {
+			tlr.addClass("even");
+		}
+	
+		$(tlr).append($("<td>" + label + "</td>").addClass("label"));
+		for (var i = 0; i < hmi.patternLength; i++) {
+			var clickable = $("<td></td>").addClass("cell");
+			clickable.addClass("output-" + pin + "-" + i);
+			if (i % 10 == 0) {
+				clickable.addClass("clickableTen");
+			} else {
+				clickable.addClass("clickable");
+			}
+			clickable.on("mousemove", hmi.cellMoveHandler);
+			clickable.on("mousedown", function(event) {
+				if (hmi.mode == "pencil") {
+					$(event.target).addClass("on");
+				} else if (hmi.mode == "rubber") {
+					$(event.target).removeClass("on");
+				}
+			});
+			$(tlr).append(clickable);
+		}
+		$("#timeline").append(tlr);
+	}
+
+	$(document).on("mousedown", function () {
+		console.log("mouse down");
+		hmi.state.mousebutton = 1;
+	});
+
+	$(document).on("mouseup", function () {
+		console.log("mouse up");
+		hmi.state.mousebutton = 0;
+	});
+
+	hmi.cellMoveHandler = function(event) {
+		var isOnClickedRow = $(event.target).parents().toArray().indexOf(hmi.state.clickedRow) >=0;
+		if (hmi.state.mousebutton == 1 && isOnClickedRow) {
+			if (hmi.mode == "pencil") {
+				$(event.target).addClass("on");
+			} else if (hmi.mode == "rubber") {
+				$(event.target).removeClass("on");
+			}
+		}
+	}
+
+	hmi.getData = function() {
+		var obj = {};
+		var arr;
+		var cls;
+		for (var i = 0; i < hmi.outputs.length; i++) {
+			arr = [];
+			// iterate over all of time
+			for (var j = 0; j < hmi.patternLength; j++) {
+				cls = "output-" + hmi.outputs[i] + "-" + j;
+				if ($("." + cls).hasClass("on")) {
+					arr.push(1);
+				} else {
+					arr.push(0);
+				}
+			}
+
+			obj[hmi.outputs[i]] = arr;
+		}
+
+		return obj;
+	}
+
+	$(function() {
+		for (var i = 0; i < hmi.outputs.length; i++) {
+			hmi.addTimelineRow(hmi.outputs[i], hmi.outputs[i], i % 2, i);
+		}
+
+		$("#pencil").on("click", function() {
+			hmi.mode = "pencil";
+		});
+
+		$("#rubber").on("click", function() {
+			hmi.mode = "rubber";
+		});
+
+		$("#deployButton").on("click", function() {
+			var data = hmi.getData();
+			var json = JSON.stringify(data);
+			$("#outputBox").text(json);
+		});
+
+		$("#magicButton").on("click", function(e) {
+			if (window.magic != undefined) {
+				magic(hmi.getData(),hmi.pins);
+			}
+			e.preventDefault();
+		});
+
+
+	});
+
+</script>
+
+</head>
+<body>
+
+<div data-role="page" id="main">
+<div data-role="header">
+	<h1>Dinosautomation!</h1>
+</div>
+
+
+<form>
+
+<fieldset data-role="controlgroup" data-type="horizontal" style="float: right; padding-right: 10px">
+	<input name="radio-choice-h-2" id="pencil" value="on" checked="checked" type="radio">
+	<label for="pencil">Pencil</label>
+	<input name="radio-choice-h-2" id="rubber" value="off" type="radio">
+	<label for="rubber">Rubber</label>
+</fieldset>
+
+<h2>Timeline</h2>
+
+<table width="100%" id="timeline" cellspacing=0>
+</table>
+
+<fieldset style="float: right; padding-right: 10px; width: 5em">
+<a href="#deployPage" class="ui-btn" id="deployButton">Dump!</a>
+<button id="magicButton">Magic!</button>
+</fieldset>
+
+</form>
+</div>
+
+
+<div data-role="page" id="deployPage">
+<div data-role="header">
+	<a href="#main" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-delete">Cancel</a>
+	<h1>Output</h1>
+</div>
+
+<div id="outputBox" style="font-family: Monaco, Courier">
+hello
+world
+</div>
+
+</div>
+
+
+</body>
+</html>
