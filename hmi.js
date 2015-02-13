@@ -37,12 +37,10 @@
 	}
 
 	$(document).on("mousedown", function () {
-		console.log("mouse down");
 		hmi.state.mousebutton = 1;
 	});
 
 	$(document).on("mouseup", function () {
-		console.log("mouse up");
 		hmi.state.mousebutton = 0;
 	});
 
