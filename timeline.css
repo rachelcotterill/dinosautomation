@@ -1,0 +1,40 @@
+	table .label {
+		width: 3em;
+		border-right: 1px solid #999999;
+	}
+
+	table .clickable {
+		border-left: 1px solid #cccccc;
+	}
+
+	table .clickableTen {
+		border-left: 1px solid #aaaaaa;
+	}
+
+	table .even {
+		background: #eeeeee;
+	}
+
+	#timeline td {
+		padding: 4px;
+	}
+
+	#timeline .on {
+		background: red;
+	}
+
+	#timeline .row0 .on {
+		background: #AA3939;
+	}
+
+	#timeline .row1 .on {
+		background: #AA8B39;
+	}
+
+	#timeline .row2 .on {
+		background: #323875;
+	}
+
+	#timeline .row3 .on {
+		background: #2D882D;
+	}
