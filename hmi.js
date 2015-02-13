@@ -55,7 +55,21 @@
 				$(event.target).removeClass("on");
 			}
 		}
-	}
+	};
+
+	// TIMELINE DATA ACCESSORS AND MUTATORS
+
+	hmi.clearData = function() {
+		for (var i = 0; i < hmi.outputs.length; i++) {
+			for (var j = 0; j < hmi.patternLength; j++) {
+				var cls = "output-" + hmi.outputs[i] + "-" + j;
+				var elem = $("." + cls);
+				if (elem.hasClass("on")) {
+					elem.removeClass("on");
+				}
+			}
+		}
+	};
 
 	hmi.getData = function() {
 		var obj = {};
@@ -77,6 +91,29 @@
 		}
 
 		return obj;
+	};
+	
+	// like getData but deliberately decouples timeline contents from pin names
+	hmi.timelineToArrays = function() {
+		var lines = [];
+		var arr;
+		var cls;
+		for (var i = 0; i < hmi.outputs.length; i++) {
+			arr = [];
+			// iterate over all of time
+			for (var j = 0; j < hmi.patternLength; j++) {
+				cls = "output-" + hmi.outputs[i] + "-" + j;
+				if ($("." + cls).hasClass("on")) {
+					arr.push(1);
+				} else {
+					arr.push(0);
+				}
+			}
+
+			lines.push(arr);
+		};
+
+		return lines;
 	}
 
 	$(function() {
@@ -93,7 +130,7 @@
 		});
 
 		$("#deployButton").on("click", function() {
-			var data = hmi.getData();
+			var data = hmi.timelineToArrays();
 			var json = JSON.stringify(data);
 			$("#outputBox").text(json);
 		});
