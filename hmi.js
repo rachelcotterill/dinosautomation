@@ -114,6 +114,24 @@
 		return lines;
 	}
 
+	// load the timeline from some arrays
+	hmi.timelineFromArrays = function(arr) {
+		hmi.clearData();
+		var cls;
+		
+		var rowsToRestore = Math.min(arr.length, hmi.outputs.length);
+		for (var i = 0; i < rowsToRestore; i++) {
+			var data = arr[i];
+			var colsToRestore = Math.min(hmi.patternLength, data.length);
+			for (var j = 0; j < colsToRestore; j++) {
+				cls = "output-" + i + "-" + j;
+				if (data[j]) {
+					$("." + cls).addClass("on");
+				}
+			}
+		}
+	}
+
 	$(function() {
 		for (var i = 0; i < hmi.outputs.length; i++) {
 			hmi.addTimelineRow(hmi.outputs[i], hmi.outputs[i], i % 2, i);
