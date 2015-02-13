@@ -17,7 +17,7 @@
 		$(tlr).append($("<td>" + label + "</td>").addClass("label"));
 		for (var i = 0; i < hmi.patternLength; i++) {
 			var clickable = $("<td></td>").addClass("cell");
-			clickable.addClass("output-" + pin + "-" + i);
+			clickable.addClass("output-" + idx + "-" + i);
 			if (i % 10 == 0) {
 				clickable.addClass("clickableTen");
 			} else {
@@ -62,7 +62,7 @@
 	hmi.clearData = function() {
 		for (var i = 0; i < hmi.outputs.length; i++) {
 			for (var j = 0; j < hmi.patternLength; j++) {
-				var cls = "output-" + hmi.outputs[i] + "-" + j;
+				var cls = "output-" + i + "-" + j;
 				var elem = $("." + cls);
 				if (elem.hasClass("on")) {
 					elem.removeClass("on");
@@ -79,7 +79,7 @@
 			arr = [];
 			// iterate over all of time
 			for (var j = 0; j < hmi.patternLength; j++) {
-				cls = "output-" + hmi.outputs[i] + "-" + j;
+				cls = "output-" + i + "-" + j;
 				if ($("." + cls).hasClass("on")) {
 					arr.push(1);
 				} else {
@@ -102,7 +102,7 @@
 			arr = [];
 			// iterate over all of time
 			for (var j = 0; j < hmi.patternLength; j++) {
-				cls = "output-" + hmi.outputs[i] + "-" + j;
+				cls = "output-" + i + "-" + j;
 				if ($("." + cls).hasClass("on")) {
 					arr.push(1);
 				} else {
