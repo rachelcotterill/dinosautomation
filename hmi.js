@@ -131,6 +131,32 @@
 			}
 		}
 	}
+	
+	// rudimentary save/load
+	hmi.saveTimelineAs = function(name) {
+		var arrays = hmi.timelineToArrays();
+		// create an object because we'll want to save more data later
+		var obj = {
+			data: arrays
+		};
+		
+		window.localStorage.setItem("dino_" + name, JSON.stringify(obj));
+	}
+	
+	hmi.loadTimelineFrom = function(name) {
+		var str = window.localStorage.getItem("dino_" + name);
+		if (!str) {
+			alert("No such entry '" + name + "' found.");
+			return;
+		}
+		var obj = JSON.parse(str);
+		if (!obj || !(obj.data)) {
+			alert("Entry '" + name + "' seems to be corrupt or broken.");
+			return;
+		}
+		
+		hmi.timelineFromArrays(obj.data);
+	}
 
 	$(function() {
 		for (var i = 0; i < hmi.outputs.length; i++) {
