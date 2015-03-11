@@ -25,6 +25,8 @@
 <form>
 
 <fieldset data-role="controlgroup" data-type="horizontal" style="float: right; padding-right: 10px">
+	<a data-role="button" href="#loadPage" id="loadButton">Load...</a>
+	<a data-role="button" href="#" id="saveButton">Save...</a>
 	<input name="radio-choice-h-2" id="pencil" value="on" checked="checked" type="radio">
 	<label for="pencil">Pencil</label>
 	<input name="radio-choice-h-2" id="rubber" value="off" type="radio">
@@ -50,12 +52,21 @@
 	<a href="#main" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-delete">Cancel</a>
 	<h1>Output</h1>
 </div>
-
 <div id="outputBox" style="font-family: Monaco, Courier">
 hello
 world
 </div>
+</div>
 
+
+<div data-role="page" id="loadPage">
+<div data-role="header">
+	<a href="#main" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-delete">Cancel</a>
+	<h1>Load...</h1>
+</div>
+<ul data-role="listview" id="loadList">
+	<li>hi</li>
+</ul>
 </div>
 
 

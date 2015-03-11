@@ -157,6 +157,19 @@
 		
 		hmi.timelineFromArrays(obj.data);
 	}
+	
+	hmi.listSavedTimelines = function() {
+		var items = [];
+		for (var i = 0; i < window.localStorage.length; i++) {
+			var k = window.localStorage.key(i);
+			
+			if (k.indexOf("dino_") == 0) {
+				k = k.substr(5);
+				items.push(k);
+			}
+		}
+		return items;
+	}
 
 	$(function() {
 		for (var i = 0; i < hmi.outputs.length; i++) {
@@ -182,6 +195,34 @@
 				magic(hmi.getData(),hmi.pins);
 			}
 			e.preventDefault();
+		});
+		
+		$("#loadButton").on("click", function() {
+			// populate the loadList
+			$("#loadList").empty();
+			var list = hmi.listSavedTimelines();
+			for (var i = 0; i < list.length; i++) {
+				var id = "load_" + list[i];
+				$("#loadList").append("<li id='" + id + "'><a href='#main'>" + list[i] + "</a></li>");
+				
+				// capture the name
+				var onclick =(function(name) {
+					return function() {
+						hmi.loadTimelineFrom(name);
+					}
+				})(list[i]);
+				
+				$("#" + id).on("click", onclick);
+			}
+			$("#loadList").listview("refresh");
+		});
+		
+		$("#saveButton").on("click", function() {
+			var name = prompt("Timeline name? (alphanumeric only)", "");
+			name = name.replace(/\W/g, '');
+			if (name) {
+				hmi.saveTimelineAs(name);
+			};
 		});
 
 
